@@ -1,0 +1,48 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require bootstrap
+ *= require bootstrap-responsive
+ */
+
+
+.total-box{
+	margin: 10px;
+	float: left;
+	width: 200px;
+}
+.total-box p{
+	text-align: center;
+	font-size: 26px;
+	font-weight: bold;
+}
+
+#total_deploys_chart_div{
+	height: 500px;
+}
+
+#total {
+	width: 810px;
+	margin: 0px auto;
+}
+
+#all_metrics_div{
+	height: 380px;
+}
+#s_metrics_div{
+	left: 300px;
+	top: -218px;	
+}
+
+#d_metrics_div{
+	left: 600px;	
+	top: -430px;	
+}

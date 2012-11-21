@@ -1,0 +1,114 @@
+<% content_for :head do -%>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" charset="utf-8">
+  	google.load("visualization", "1", {packages:["corechart", "gauge"]});		
+	</script>
+<% end -%>
+<% @projects.each do |project| %>
+	<div class="project">
+		<div id="total">
+			<div class="well well-large total-box">
+				<h3>Total:</h3>
+				<p><%= project.deploys.size %></p>
+			</div>
+
+			<div class="well well-large total-box">
+				<h3>Semana:</h3>
+				<p><%= project.deploys.where('created_at >= ?', (Date.today - (7).days)).size %></p>
+			</div>
+
+			<div class="well well-large total-box">
+				<h3>Hoje:</h3>
+				<p><%= project.deploys.where('created_at >= ?', Date.today).size %></p>
+			</div>		
+			<div id="all_metrics_div">
+				<div id="m_metrics_div"></div>					
+				<div id="s_metrics_div"></div>								
+				<div id="d_metrics_div"></div>				
+			</div>
+		</div>
+
+		<div id="charts">
+			<div id="total_deploys_chart_div"></div>	
+		</div>	
+	</div>
+  <script type="text/javascript">
+  	google.setOnLoadCallback(drawTotalDeploys);
+	  function drawTotalDeploys() {
+	    var data = google.visualization.arrayToDataTable([
+	      ['Semana', 'Deploys'],
+				<% ((Date.today - 7.days) .. (Date.today - 1.days)).each do |date| %>
+	      ['<%= week_day(date.wday) %>',  <%= project.deploys.where('created_at > ? and created_at < ?', date.beginning_of_day, date.end_of_day).size %>],
+				<% end %>
+	    ]);
+
+	    var options = {
+	      title: 'Total Deploys last week'
+	    };
+
+    var chart = new google.visualization.ColumnChart(document.getElementById('total_deploys_chart_div'));
+    chart.draw(data, options);
+  }
+
+	google.setOnLoadCallback(drawMonthGauge);
+  function drawMonthGauge() {
+    var data = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Mês', <%= project.deploys.where('created_at >= ?', Date.today.beginning_of_month).size %>],
+    ]);
+
+    var options = {
+      width: 500, height: 220,
+      redFrom: 0, redTo: <%= (project.daily_target * 30) - (((project.daily_target * 30).to_f / 100) * 20).to_i %>,
+      yellowFrom:<%= (project.daily_target * 30) - (((project.daily_target * 30).to_f / 100) * 20).to_i %>, yellowTo: <%= (project.daily_target * 30) %>,
+      greenFrom: <%= (project.daily_target * 30) %>, greenTo: <%= (project.daily_target * 30) + (10 * 30) %>,
+      minorTicks: 5,
+			max: <%= (project.daily_target * 30) + (10 * 30)  %>
+    };
+
+    var chart = new google.visualization.Gauge(document.getElementById('m_metrics_div'));
+    chart.draw(data, options);
+  }
+
+	google.setOnLoadCallback(drawWeekGauge);
+  function drawWeekGauge() {
+    var data = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Semana', <%= project.deploys.where('created_at >= ?', (Date.today - (7).days)).size %>],
+    ]);
+
+    var options = {
+      width: 500, height: 220,
+      redFrom: 0, redTo: <%= (project.daily_target * 7) - (((project.daily_target * 7).to_f / 100) * 20).to_i %>,
+      yellowFrom:<%= (project.daily_target * 7) - (((project.daily_target * 7).to_f / 100) * 20).to_i %>, yellowTo: <%= (project.daily_target * 7) %>,
+      greenFrom: <%= (project.daily_target * 7) %>, greenTo: <%= (project.daily_target * 7) + (10 * 7) %>,
+      minorTicks: 5,
+			max: <%= (project.daily_target * 7) + (10 * 7) %>
+    };
+
+    var chart = new google.visualization.Gauge(document.getElementById('s_metrics_div'));
+    chart.draw(data, options);
+  }
+
+	google.setOnLoadCallback(drawDayGauge);
+  function drawDayGauge() {
+    var data = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Dia', <%= project.deploys.where('created_at >= ?', Date.today).size %>],
+    ]);
+
+    var options = {
+      width: 500, height: 220,
+      redFrom: 0, redTo: <%= project.daily_target - ((project.daily_target.to_f / 100) * 20).to_i %>,
+      yellowFrom:<%= project.daily_target - ((project.daily_target.to_f / 100) * 20).to_i %>, yellowTo: <%= project.daily_target %>,
+      greenFrom: <%= project.daily_target %>, greenTo: <%= project.daily_target + 10 %>,
+      minorTicks: 5,
+			max: <%= project.daily_target + 10 %>
+    };
+
+    var chart = new google.visualization.Gauge(document.getElementById('d_metrics_div'));
+    chart.draw(data, options);
+  }
+
+  </script>	
+<% end %>
