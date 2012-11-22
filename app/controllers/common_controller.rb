@@ -9,11 +9,7 @@ class CommonController < ApplicationController
     project = Project.find_by_uuid params[:id]
     if project
       deploy = Deploy.new
-      if user
-        deploy.user = user 
-      else
-        deploy.user = project.user
-      end
+      deploy.user = project.user
       deploy.project = project
       deploy.save
 
