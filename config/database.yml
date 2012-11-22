@@ -39,3 +39,4 @@ production:
   pool: 5
   username: yoda
   password: w8dayj
+  host: 10.176.165.113
