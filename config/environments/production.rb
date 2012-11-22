@@ -49,7 +49,7 @@ DeployWatch::Application.configure do
   config.assets.precompile += %w( *.js *.css )
 
   # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = false
 
   # Enable threaded mode
   # config.threadsafe!
@@ -65,5 +65,5 @@ DeployWatch::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
   
-  config.action_mailer.default_url_options = { :host => 'localhost:3000' }    
+  config.action_mailer.default_url_options = { :host => 'deploy.bolsafinanceira.com' }    
 end

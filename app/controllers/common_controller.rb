@@ -1,22 +1,25 @@
 class CommonController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :except => [:make_deploy]
   
   def index
     @projects = current_user.projects
   end
   
   def make_deploy
-    project = Project.find params[:id]
-    user = User.find_by_authentication_token params[:token] if params[:token].present?
-    deploy = Deploy.new
-    if user
-      deploy.user = user 
+    project = Project.find_by_uuid params[:id]
+    if project
+      deploy = Deploy.new
+      if user
+        deploy.user = user 
+      else
+        deploy.user = project.user
+      end
+      deploy.project = project
+      deploy.save
+
+      render :json => :ok      
     else
-      deploy.user = project.user
+      render :json => :fail            
     end
-    deploy.project = project
-    deploy.save
-    
-    render :json => :ok
   end
 end
